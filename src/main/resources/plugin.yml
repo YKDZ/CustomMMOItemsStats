@@ -1,0 +1,6 @@
+name: CustomMMOItemsStats
+version: '${version}'
+main: net.encmys.ykdz.CustomMMOItemsStats
+api-version: 1.19
+authors: [ YK_DZ ]
+softdepend: [ MMOItems, MMOCore, MythicLib ]

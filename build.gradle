@@ -1,0 +1,59 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version('7.1.2')
+}
+
+group = 'net.encmys'
+version = '1.4'
+
+repositories {
+    mavenCentral()
+    maven {name = 'papermc-repo'; url = 'https://papermc.io/repo/repository/maven-public/'}
+    maven {name = 'sonatype-repo'; url = 'https://oss.sonatype.org/content/groups/public/'}
+    maven {name = 'phoenix'; url = 'https://nexus.phoenixdevt.fr/repository/maven-public/'}
+}
+
+dependencies {
+    compileOnly 'io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT'
+    compileOnly 'net.Indyuce:MMOItems-API:6.9.2-SNAPSHOT'
+    compileOnly 'io.lumine:MythicLib-dist:1.5.2-SNAPSHOT'
+    implementation('org.bstats:bstats-bukkit:3.0.2')
+}
+
+shadowJar {
+    relocate 'org.bstats', 'net.encmys.ykdz.libs.org.bstats'
+}
+
+def targetJavaVersion = 17
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+        options.release = targetJavaVersion
+    }
+}
+
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+tasks.register("delete", Delete).get().delete("build/libs/"+project.name+"-"+project.version+".jar")
+tasks.named("build").get().dependsOn("shadowJar").finalizedBy("delete").doLast {
+    println("Deleting: "+ "build/libs/"+project.name+"-"+project.version+".jar")
+}

@@ -1,0 +1,14 @@
+options:
+  bstats: true
+
+stats:
+  ENCHANTMENT_SLOT:
+    type: double
+    displayed-material: ENDER_EYE
+    displayed-name: 'Enchantment Slot'
+    displayed-lore:
+      - "How many enchantment can an item hold."
+      - "Featured by Skript."
+    disallowed-types:
+      - 'consumable'
+      - 'miscellaneous'
